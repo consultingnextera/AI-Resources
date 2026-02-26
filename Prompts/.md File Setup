@@ -77,7 +77,7 @@ Full File Manifest (Mandatory—Include These in Every Generation):
 - src/utils/ with logging_config.py (structured logging), retry.py, validators.py (schema validation)
 - src/models/ with memory.py, skill.py, loop_result.py (Pydantic models)
 - logs/ (git-ignored runtime logs)
-- .github/workflows/ with nightly.yml and ci.yml
+- .github/workflows/ with nightly.yml and ci.yml (PR gate on every pull request: lint, type check, tests on Python 3.11 and 3.12)
 - .github/dependabot.yml to auto-update Python and GitHub Actions dependencies weekly
 - For loops/: Add YAML front-matter to each defining: loop_id, trigger (schedule/event), timeout_seconds, max_cost_usd, output_schema
 - For skills/: Include SKILLS_INDEX.md with YAML template for skills; no actual skill content—empty snake_case.md placeholders if needed for structure
