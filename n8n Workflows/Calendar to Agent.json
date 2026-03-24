@@ -1,0 +1,82 @@
+{
+  "name": "Google Calendar → Agent Events",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 15 }]
+        }
+      },
+      "id": "trigger-01",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 20,
+        "options": {
+          "timeMin": "={{ $now.toISO() }}",
+          "timeMax": "={{ $now.plus({ hours: 24 }).toISO() }}",
+          "singleEvents": true,
+          "orderBy": "startTime"
+        },
+        "calendar": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list"
+        }
+      },
+      "id": "gcal-01",
+      "name": "Get Upcoming Events (24h)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [220, 0],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transform Google Calendar events into  event files\n// Uses a dedupe log file to avoid creating duplicate events\nconst items = $input.all();\nconst results = [];\n\nconst sanitize = (str) => (str || '').replace(/[\\r\\n]+/g, ' ').replace(/---/g, '—').trim();\n\nfor (const item of items) {\n  const evt = item.json;\n  const calEventId = evt.id || 'unknown';\n  \n  const summary = sanitize(evt.summary || 'Untitled Event');\n  const description = sanitize(evt.description || '');\n  const location = sanitize(evt.location || '');\n  const hangoutLink = evt.hangoutLink || '';\n  const conferenceLink = evt.conferenceData?.entryPoints?.[0]?.uri || hangoutLink;\n  \n  const startRaw = evt.start?.dateTime || evt.start?.date || '';\n  const endRaw = evt.end?.dateTime || evt.end?.date || '';\n  const startDate = startRaw ? new Date(startRaw) : new Date();\n  const endDate = endRaw ? new Date(endRaw) : new Date();\n  \n  const attendees = (evt.attendees || [])\n    .map(a => `${sanitize(a.displayName || a.email)} (${a.responseStatus})`)\n    .join(', ') || 'none';\n  \n  const now = new Date();\n  const minutesUntil = Math.round((startDate - now) / 60000);\n  \n  let priority = 'normal';\n  if (minutesUntil <= 30) priority = 'high';\n  else if (minutesUntil > 60) priority = 'low';\n  \n  // Stable hash from calendar event ID for deduplication\n  const idHash = calEventId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);\n  const cleanSummary = (summary || 'untitled')\n    .toLowerCase()\n    .replace(/[^a-z0-9]+/g, '-')\n    .replace(/^-+|-+$/g, '')\n    .slice(0, 30) || 'event';\n  \n  // Use stable filename based on event ID hash (not timestamp) for dedup\n  const datePrefix = startDate.toISOString().replace(/[:.]/g, '-').slice(0, 10);\n  const filename = `${datePrefix}_calendar_reminder_${cleanSummary}_${idHash}.md`;\n  \n  const yaml = `---\\ntype: calendar_reminder\\nsource: n8n\\npriority: ${priority}\\ntimestamp: ${now.toISOString()}\\nprocessed: false\\ncalendar_event_id: ${calEventId}\\n---\\n# Meeting: ${summary}\\n\\n**When**: ${startDate.toLocaleString('en-US', { timeZone: 'America/New_York' })} — ${endDate.toLocaleString('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit' })}\\n**Minutes until start**: ${minutesUntil}\\n**Location**: ${location || 'none'}\\n**Conference link**: ${conferenceLink || 'none'}\\n**Attendees**: ${attendees}\\n\\n## Description\\n\\n${description || '(no description)'}\\n\\n## Action Needed\\n\\nSurface this to the user if within 30 minutes.
+      },
+      "id": "code-01",
+      "name": "Transform to Event YAML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "command": "={{ 'EVENTS_DIR=/home/user//events && FILE=\"$EVENTS_DIR/' + $json.filename + '\" && DEDUP_LOG=\"$EVENTS_DIR/.calendar_seen.log\" && touch \"$DEDUP_LOG\" && if grep -qF \"' + $json.idHash + '\" \"$DEDUP_LOG\"; then echo \"SKIPPED_DUPLICATE\"; else echo ' + $json.encoded + ' | base64 -d > \"$FILE\" && echo \"' + $json.idHash + '\" >> \"$DEDUP_LOG\" && echo \"CREATED\"; fi' }}"
+      },
+      "id": "exec-01",
+      "name": "Write Event File (Deduplicated)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [660, 0]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": {
+      "main": [[{ "node": "Get Upcoming Events (24h)", "type": "main", "index": 0 }]]
+    },
+    "Get Upcoming Events (24h)": {
+      "main": [[{ "node": "Transform to Event YAML", "type": "main", "index": 0 }]]
+    },
+    "Transform to Event YAML": {
+      "main": [[{ "node": "Write Event File (Deduplicated)", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [{ "name": "" }]
+}
