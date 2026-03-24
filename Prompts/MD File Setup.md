@@ -1,20 +1,48 @@
-# Setting Up Your Initial .MD Files for Agentic Systems
+# How to Set Up Your Own AI Agent System
 
-This repository provides a framework for setting up Markdown-based files and folders to build self-improving agentic systems powered by any LLM (e.g., Claude, GPT, etc.). It uses a PARA structure (Projects, Areas, Resources, Archives) for organization, with Markdown for persistence and Python for orchestration.
+## What This Is
 
-## Quick Start
-1. **Generate the Repo**: Copy the super prompt below into your chosen LLM (e.g., Claude, Grok) and run it. Replace "(insert LLM here)" with your LLM (e.g., "Claude").
-2. **Output**: The LLM will generate file contents in a .zip-ready format. Save them to a folder named `(InsertLLMHere)AgentsVault/`.
-3. **Setup**:
-   - Install dependencies: `make install` (uses pyproject.toml).
-   - Version control: Initialize Git and commit.
-   - Tools: Open in Obsidian for linking/visualization; use VS Code for Python.
-   - Run: `make run` to start the agent runner.
-4. **Customization**: Upload skills to `skills/` using the template in `SKILLS_INDEX.md`. Update config in `src/config.py`.
+Most people use AI reactively — open a chat, ask a question, get an answer, close it. Every conversation starts from zero. The AI has no memory of your business, your goals, your preferences, or what you've already figured out.
+
+An agentic system flips that. Instead of you always feeding the AI context, you build a persistent workspace — a structured set of files — that your AI agents read from and write to automatically. Over time the system gets smarter about your business without you having to repeat yourself.
+
+This guide gives you a prompt you can run right now to generate that workspace from scratch. One prompt, one output, and you'll have a fully structured starting point for your own AI agent system.
 
 ---
 
-## Super Prompt
+## What You're Building
+
+Running the prompt below generates a complete folder structure called `AgentsVault/` — a markdown-based workspace your AI agents use as persistent memory and context. Here's what it includes:
+
+**Core files** — Your business context, active tasks, and agent instructions. These are what your agents read at the start of every session to understand who you are and what you're working on.
+
+**Learning loops** — Nine automated processes that help your agents improve over time. They track mistakes, log predictions, extract insights from sessions, and turn failures into rules. The system literally learns from its own errors.
+
+**Memory layer** — A structured memory store where agents write what they've learned, scored by how reliable each piece of information is. High-trust memories influence future decisions. Low-trust ones fade out automatically.
+
+**Skills folder** — A place to drop modular agent skills that give your agents specialized capabilities — content creation, client deliverables, research, automation documentation, and more.
+
+**Python automation** — Scripts that run nightly to extract insights, clean up memory, and keep the system self-maintaining without manual work.
+
+---
+
+## Before You Start
+
+You'll need:
+- An account with any LLM (Claude, ChatGPT, Grok, or similar)
+- Somewhere to save files (a local folder or GitHub repo)
+- Python 3.x installed if you want to run the automation scripts
+- Optionally: Obsidian (free) for visualizing how your files connect
+
+First-time setup takes about 15–30 minutes.
+
+---
+
+## Step 1 — Run the Prompt
+
+Copy the entire prompt below and paste it into your LLM of choice. The LLM will generate every file in the system, one by one, with full content. This will be a long output — that's expected.
+
+---
 
 ```
 You are an AI assistant tasked with generating a complete, production-ready repository for building and using self-improving agents powered by an LLM (e.g., via its API, SDK, or related frameworks). This is for my personal knowledge management (PKM) system using Markdown files for consistency, updates, and version control (e.g., via Git and tools like Obsidian). I emphasize modularity, bi-directional linking, code snippets, automation for updates (e.g., scripts or agents to summarize/tag), and self-improving capabilities.
@@ -108,9 +136,54 @@ List any inconsistencies found and resolve them before finalizing the output.
 
 ---
 
-## Best Practices
-- Use Git for versioning .md files.
-- Automate updates with nightly scripts.
-- Scale memory with JSONL sidecars for queries.
+## Step 2 — Save the Output
 
-For issues, see CONTRIBUTING.md in the generated repo.
+The LLM will generate each file with its full path and content. As it outputs each one:
+
+1. Create a folder on your computer called `AgentsVault/`
+2. Create each file at the path shown (e.g., `AgentsVault/AGENTS.md`)
+3. Paste in the content exactly as generated
+4. Repeat for every file
+
+If you're comfortable with Git, initialize a repository in the folder and commit after saving everything. This gives you version control on your entire agent system from day one — you can always roll back if something breaks.
+
+---
+
+## Step 3 — Activate It
+
+Once your files are saved:
+
+```bash
+# Install Python dependencies
+make install
+
+# Confirm everything is wired correctly
+make nightly-dry-run
+
+# Start the agent runner
+make run
+```
+
+If you don't have Python set up, start with just the markdown files. The core value — persistent context, learning loops, memory — works immediately just by having agents read and write to the files. The Python automation is an enhancement, not a requirement to get started.
+
+---
+
+## What to Customize First
+
+Once the vault is generated, these are the files worth personalizing before anything else:
+
+**`AGENTS.md`** — Update the project description to reflect your business and what you want your agents to help with.
+
+**`USER.md`** — Add your background, communication preferences, and working style so agents understand how to interact with you.
+
+**`skills/`** — This is where you drop specialized agent skills. Nextera can provide pre-built skills tailored to your business — content creation, client proposals, research, automation documentation, and more.
+
+**`.env`** — Add your LLM API key so the automation scripts can run.
+
+---
+
+## Questions or Need Help Setting This Up?
+
+Nextera Consulting helps businesses set up, customize, and run systems like this end to end — from the initial vault setup to building out a full agent stack that runs autonomously.
+
+**consulting.nextera@gmail.com** | **nexteraconsult.com/ai**
