@@ -8,6 +8,10 @@ Without a rules file, every session starts cold. The AI makes generic decisions,
 
 This prompt generates a `cursor.rules` (or `claude.md` / `windsurf.rules`) file tailored to your specific project. Paste it in once. Your AI coding sessions get measurably better immediately.
 
+**Two ways to use this:**
+- **Paste the whole file into an LLM** — it will interview you and fill out the template at the bottom
+- **Copy just the template** — scroll to the bottom and fill it in directly
+
 ---
 
 ## Which File to Create
@@ -21,11 +25,6 @@ This prompt generates a `cursor.rules` (or `claude.md` / `windsurf.rules`) file 
 
 The content is the same — just rename based on your tool.
 
----
-
-**Two ways to use this:**
-- **Paste the whole file into an LLM** — it will interview you and fill out the template at the bottom
-- **Copy just the template** — scroll to the bottom and fill it in directly
 
 ---
 
