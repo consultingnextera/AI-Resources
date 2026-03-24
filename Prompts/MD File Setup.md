@@ -176,7 +176,7 @@ Once the vault is generated, these are the files worth personalizing before anyt
 
 **`USER.md`** — Add your background, communication preferences, and working style so agents understand how to interact with you.
 
-**`skills/`** — This is where you drop specialized agent skills. Nextera can provide pre-built skills tailored to your business — content creation, client proposals, research, automation documentation, and more.
+**`skills/`** — This is where you drop or create specialized agent skills. Nextera can provide pre-built skills tailored to your business — content creation, client proposals, research, automation documentation, and more.
 
 **`.env`** — Add your LLM API key so the automation scripts can run.
 
