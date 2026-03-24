@@ -23,26 +23,26 @@ n8n catches events → writes .md files to /events/
     ↓
 inotify watches /events/ → fires POST to OpenClaw gateway
     ↓
-Zeus (orchestrator) receives event → routes to specialist agent
+The Orchestrator receives event → routes to specialist agent
     ↓
 Specialist executes → writes result to vault or Supabase
     ↓
 Event moves to /events/processed/
 ```
 
-**The 8 specialist agents:**
+**The 9 specialist agents** (names are yours to customize — these are the roles):
 
-| Agent | Role | What They Do |
-|---|---|---|
-| Zeus | Orchestrator | Routes all tasks, enforces permissions, never does specialist work |
-| Hermes | Intake | First responder — classifies every inbound event and routes it |
-| Apollo | Research | Web research, source synthesis, fact-cited output |
-| Athena | Strategy | Planning, roadmaps, trade-off analysis |
-| Calliope | Content | Content pipeline — ideas → briefs → full packages → approval queue |
-| Daedalus | Code | Code writing, debugging, refactoring |
-| Hephaestus | Monitor | System health, service status, friction scanning |
-| Mnemosyne | Memory | Vault memory, embeddings, knowledge compaction |
-| Ares | Security | Hard gate for all code and deploy changes |
+| Role | What They Do |
+|---|---|
+| Orchestrator | Routes all tasks, enforces permissions, never does specialist work |
+| Intake | First responder — classifies every inbound event and routes it |
+| Researcher | Web research, source synthesis, fact-cited output |
+| Strategist | Planning, roadmaps, trade-off analysis |
+| Content Engine | Content pipeline — ideas → briefs → full packages → approval queue |
+| Coder | Code writing, debugging, refactoring |
+| Monitor | System health, service status, friction scanning |
+| Memory Curator | Vault memory, embeddings, knowledge compaction |
+| Security Auditor | Hard gate for all code and deploy changes |
 
 **Memory (hybrid):**
 - Markdown vault — git-versioned, human-readable, source of truth
@@ -145,22 +145,22 @@ Generate the following files with full content:
 
 ROOT LEVEL (operating directives):
 
-AGENTS.md — Zeus operating directive. Include:
-- Identity: Zeus is the lead orchestrator. Never does specialist work. Only classifies, delegates, aggregates.
+AGENTS.md — Orchestrator operating directive. Include:
+- Identity: The Orchestrator is the lead agent. Never does specialist work. Only classifies, delegates, aggregates.
 - Boot sequence (files to read in order at session start)
 - Delegation pattern: classify → route → pre-read paths → spawn → aggregate
-- Orchestration/Persistence protocol: Zeus lifecycle = dispatch → aggregate → audit → persist → report. Any report without persistence confirmation is an orchestration failure.
+- Orchestration/Persistence protocol: Orchestrator lifecycle = dispatch → aggregate → audit → persist → report. Any report without persistence confirmation is an orchestration failure.
 - Autonomy boundaries: Tier 1 (auto), Tier 2 (implicit, 30-min veto window), Tier 3 (hard gate)
 - Output rules: all output to markdown files, ISO 8601 timestamps, commit messages [component] description
 - Git permissions: auto-commit vault-only changes to main; code/config changes require branch + PR; NEVER commit .env or secrets
 
-SOUL.md — Zeus character and values. Include:
+SOUL.md — Orchestrator character and values. Include:
 - Integrity: never patch regressions twice (architectural audit on repeat failures), atomic ingestion, ghost-free git state before spawning
-- Delegation mandate: Zeus is a non-generating router. All synthesis delegated to specialists.
+- Delegation mandate: The Orchestrator is a non-generating router. All synthesis delegated to specialists.
 - Core values: lean, private, confirm before external action, no filler
 - Networking mandate: all ingress via Tailscale ZTNA, no public ports, SSH pubkey only
 
-IDENTITY.md — Zeus name, role, and agent roster. Include the 9 agents (Zeus, Apollo, Athena, Calliope, Daedalus, Hephaestus, Hermes, Mnemosyne, Ares) with triggers, roles, and workspace paths.
+IDENTITY.md — Orchestrator name, role, and agent roster. Include all 9 agents (Orchestrator, Intake, Researcher, Strategist, Content, Coder, Monitor, Memory, Security) — use your own names or keep the role labels with triggers, roles, and workspace paths.
 
 USER.md — User profile template. Include sections for: professional background, current projects (production and in-development), daily schedule, revenue streams, communication preferences, and technical communication rules. Populate with placeholder text that prompts the user to fill in their details.
 
@@ -182,7 +182,7 @@ HEARTBEAT.md — Automation schedule. Include:
 - Weekly autonomy improvement on Sundays
 - OpenClaw maintenance checklist (dependency audit, environment validation, memory flush, agent health, security check)
 
-INTERACTIONS.md — Proactive clarification patterns. Define when Zeus asks follow-up questions for: memory writes (trust score), research requests (depth), strategy requests (constraints), code requests (production vs prototype), loop triggers (all vs specific), ambiguous output destinations, git operations.
+INTERACTIONS.md — Proactive clarification patterns. Define when the Orchestrator asks follow-up questions for: memory writes (trust score), research requests (depth), strategy requests (constraints), code requests (production vs prototype), loop triggers (all vs specific), ambiguous output destinations, git operations.
 
 CONCEPTS.md — Shared vocabulary. Define: self-improving agent loop, the 9 learning loops, file-based memory, AGENTS.md standard, PARA method, compound learning, trust score, context engineering.
 
@@ -192,7 +192,7 @@ SECURITY.md — Security policy. Include: API key handling (where keys live, rot
 
 agents/ DIRECTORY:
 
-agents/REGISTRY.md — Master routing table for all 9 specialists. For each agent include: trigger keyword, model (use placeholders like [FAST_MODEL], [STRATEGY_MODEL], [CODE_MODEL] etc.), role, responsibilities, behavior rules, context files, and definition of done. Agents: Apollo (research), Athena (strategy), Calliope (content engine with full content pipeline workflow), Daedalus (code), Hephaestus (monitor with system pulse report format), Hermes (intake/classification with category routing table), Mnemosyne (memory curator), Ares (security auditor/hard gate).
+agents/REGISTRY.md — Master routing table for all 9 specialists. For each agent include: trigger keyword, model (use placeholders like [FAST_MODEL], [STRATEGY_MODEL], [CODE_MODEL] etc.), role, responsibilities, behavior rules, context files, and definition of done. Agents: Researcher, Strategist, Content Engine, Coder, Monitor, Intake, Memory Curator, Security Auditor — use your own names, these are the roles.
 
 agents/ORCHESTRATION.md — Multi-agent workflow. Include: 8-agent routing table with handoff triggers and payloads, handoff protocol (sessions_spawn format), hub-and-spoke topology rules.
 
@@ -297,21 +297,21 @@ The config below reflects a battle-tested setup as of March 2026 — fast/cheap 
       "workspace": "~/PersonalOS/"
     },
     "list": [
-      { "id": "main",     "name": "Zeus",       "model": "google/gemini-3.1-flash-lite-preview" },
-      { "id": "research", "name": "Apollo",      "model": "minimax/minimax-m2.5" },
-      { "id": "strategy", "name": "Athena",      "model": "anthropic/claude-sonnet-4.6" },
-      { "id": "content",  "name": "Calliope",    "model": "google/gemini-3.1-flash-lite-preview" },
-      { "id": "code",     "name": "Daedalus",    "model": "moonshotai/kimi-k2.5" },
-      { "id": "monitor",  "name": "Hephaestus",  "model": "google/gemini-3.1-flash-lite-preview" },
-      { "id": "inbox",    "name": "Hermes",      "model": "qwen/qwen3.5-35b-a3b" },
-      { "id": "memory",   "name": "Mnemosyne",   "model": "google/gemini-3.1-flash-lite-preview" },
-      { "id": "security", "name": "Ares",        "model": "openai/gpt-5.2-codex" }
+      { "id": "main",     "name": "Orchestrator",       "model": "google/gemini-3.1-flash-lite-preview" },
+      { "id": "research", "name": "Researcher",      "model": "minimax/minimax-m2.5" },
+      { "id": "strategy", "name": "Strategist",      "model": "anthropic/claude-sonnet-4.6" },
+      { "id": "content",  "name": "Content",    "model": "google/gemini-3.1-flash-lite-preview" },
+      { "id": "code",     "name": "Coder",    "model": "moonshotai/kimi-k2.5" },
+      { "id": "monitor",  "name": "Monitor",  "model": "google/gemini-3.1-flash-lite-preview" },
+      { "id": "inbox",    "name": "Intake",      "model": "qwen/qwen3.5-35b-a3b" },
+      { "id": "memory",   "name": "Memory",   "model": "google/gemini-3.1-flash-lite-preview" },
+      { "id": "security", "name": "Security",        "model": "openai/gpt-5.2-codex" }
     ]
   }
 }
 ```
 
-> **Cost logic**: Gemini Flash Lite handles high-frequency tasks (routing, monitoring, memory) at near-zero cost. Reserve Claude, Kimi, and GPT-5.2 for tasks where quality matters — strategy, code, and security audits. Apollo uses MiniMax for research because it's fast and cheap, not because it's the strongest model.
+> **Cost logic**: Gemini Flash Lite handles high-frequency tasks (routing, monitoring, memory) at near-zero cost. Reserve Claude, Kimi, and GPT for tasks where quality matters — strategy, code, and security audits. Use fast/cheap models for research, routing, and memory.
 
 Create `~/PersonalOS/secrets.env` (chmod 600, never commit):
 
@@ -374,9 +374,9 @@ These are the files to personalize before your first session:
 
 **`CLAUDE.md`** — Update the model assignments to match whatever models you're actually using via OpenRouter.
 
-**`memory/VOICE_PROFILE.md`** — Fill in your voice and writing style. Calliope reads this before generating any content.
+**`memory/VOICE_PROFILE.md`** — Fill in your voice and writing style. The Content agent reads this before generating any content.
 
-**`tasks/PLANNER.md`** — Set your 30/90/365-day goals. Athena reads this weekly.
+**`tasks/PLANNER.md`** — Set your 30/90/365-day goals. The Strategist reads this weekly.
 
 **`.env` / `secrets.env`** — Add your API keys.
 
@@ -384,11 +384,11 @@ These are the files to personalize before your first session:
 
 ## What to Expect in the First Week
 
-**Day 1:** OpenClaw starts, event watcher runs, Zeus is available via the gateway. You'll get system health reports from Hephaestus.
+**Day 1:** OpenClaw starts, event watcher runs, the Orchestrator is available via the gateway. You'll get system health reports from the Monitor agent.
 
 **Days 2–3:** Wire up n8n workflows one at a time. Start with calendar (lowest risk), then email, then CRM.
 
-**Days 4–7:** The learning loops start accumulating data. Mnemosyne begins compacting memory. Guardrails start populating as the system catches its own mistakes.
+**Days 4–7:** The learning loops start accumulating data. the Memory Curator begins compacting memory. Guardrails start populating as the system catches its own mistakes.
 
 **After week 1:** You'll have a working event-driven system. The self-improvement loops (Failure-to-Guardrail, Preference Distillation, Friction Scanner, Knowledge Distillation) run weekly and compound over time.
 
