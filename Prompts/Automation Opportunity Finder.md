@@ -115,7 +115,7 @@ The report gives you a roadmap. Your next steps:
 
 **If you want someone to build it:** This report is a ready-made brief. Send it to an automation consultant (like Nextera) and you'll get accurate scoping and pricing immediately — no discovery call needed to explain your situation.
 
-**consulting.nextera@gmail.com** | **nexteraconsult.com/ai**
+**consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai)
 
 ---
 
