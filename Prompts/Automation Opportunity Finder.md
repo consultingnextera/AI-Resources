@@ -8,15 +8,18 @@ This prompt works like a lightweight operations audit. Answer the questions hone
 
 ---
 
-## How to Use This
-
-Copy the prompt below, paste it into any LLM (Claude works best for this), and answer the questions. The more specific you are about your actual workflows, the more actionable the output.
+**Two ways to use this:**
+- **Paste the whole file into an LLM** — it will interview you and fill out the template at the bottom
+- **Copy just the template** — scroll to the bottom and fill it in directly
 
 ---
 
-## The Prompt
+## LLM Instructions
 
-```
+Read this file, then conduct the following interview with me. Ask one section at a time and wait for my full answers. When I've answered, fill out the template at the bottom of this file.
+
+---
+
 You are acting as an AI automation strategist conducting a lightweight operations audit. Your job is to identify the highest-value automation opportunities in my business and give me a prioritized, actionable plan — not theory, not generic advice. Specific tools, realistic time estimates, honest complexity ratings.
 
 Ask me the following questions. Wait for my full answers before generating the audit. If something is vague, ask one targeted follow-up. When I've answered, produce the automation opportunities report.
@@ -101,7 +104,6 @@ A numbered sequence for tackling these in the right order, with a brief reason f
 ---
 
 Be direct. Don't pad with qualifications. If something will save 30 minutes a week, say 30 minutes — not "significant time savings." If something is hard, say it's hard. I need to make real decisions from this.
-```
 
 ---
 
@@ -114,3 +116,55 @@ The report gives you a roadmap. Your next steps:
 **If you want someone to build it:** This report is a ready-made brief. Send it to an automation consultant (like Nextera) and you'll get accurate scoping and pricing immediately — no discovery call needed to explain your situation.
 
 **consulting.nextera@gmail.com** | **nexteraconsult.com/ai**
+
+---
+
+## Template
+
+If you'd rather map your own automation opportunities without the LLM interview, use this framework:
+
+```markdown
+# Automation Opportunities — [Your Business]
+
+## Top Opportunities
+
+### #1 — [Name]
+- **What it replaces:** 
+- **Tool:** 
+- **Time saved/week:** 
+- **Complexity:** Low / Medium / High
+- **First step:** 
+- **Cost:** 
+
+### #2 — [Name]
+- **What it replaces:** 
+- **Tool:** 
+- **Time saved/week:** 
+- **Complexity:** Low / Medium / High
+- **First step:** 
+- **Cost:** 
+
+### #3 — [Name]
+- **What it replaces:** 
+- **Tool:** 
+- **Time saved/week:** 
+- **Complexity:** Low / Medium / High
+- **First step:** 
+- **Cost:** 
+
+## Quick Wins (under 2 hours to set up)
+- 
+- 
+
+## What NOT to Automate
+- 
+
+## Build Order
+1. 
+2. 
+3. 
+```
+
+---
+
+> **consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai)
