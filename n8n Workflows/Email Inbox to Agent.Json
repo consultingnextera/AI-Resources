@@ -1,0 +1,125 @@
+{
+  "name": "Gmail Inbox → Agent Events",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 5 }]
+        }
+      },
+      "id": "trigger-01",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 10,
+        "filters": {
+          "includeSpamTrash": false,
+          "labelIds": ["UNREAD"],
+          "q": ""
+        },
+        "options": {
+          "format": "metadata"
+        }
+      },
+      "id": "gmail-01",
+      "name": "Get Unread Emails",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [220, 0],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "Gmail - your-email@example.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transform Gmail messages into  event YAML files\n// Sanitizes all user content to prevent YAML/shell injection\nconst items = $input.all();\nconst results = [];\n\n// Sanitize strings for safe YAML embedding\nconst sanitize = (str) => (str || '').replace(/[\\r\\n]+/g, ' ').replace(/---/g, '—').trim();\n\nfor (const item of items) {\n  const msg = item.json;\n  const messageId = msg.id || 'unknown';\n  \n  // Extract headers\n  const headers = msg.payload?.headers || [];\n  const getHeader = (name) => {\n    const h = headers.find(h => h.name.toLowerCase() === name.toLowerCase());\n    return h ? h.value : '';\n  };\n  \n  const from = sanitize(getHeader('From'));\n  const subject = sanitize(getHeader('Subject'));\n  const date = sanitize(getHeader('Date'));\n  const to = sanitize(getHeader('To'));\n  const cc = sanitize(getHeader('Cc'));\n  const snippet = sanitize(msg.snippet || '');\n  \n  // Generate timestamp for filename\n  const now = new Date();\n  const ts = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);\n  \n  // Clean subject for filename (alphanumeric + hyphens only)\n  const cleanSubject = (subject || 'no-subject')\n    .toLowerCase()\n    .replace(/[^a-z0-9]+/g, '-')\n    .replace(/^-+|-+$/g, '')\n    .slice(0, 40) || 'no-subject';\n  \n  // Determine priority based on simple heuristics\n  let priority = 'normal';\n  const subjectLower = subject.toLowerCase();\n  if (subjectLower.includes('urgent') || subjectLower.includes('asap')) {\n    priority = 'urgent';\n  } else if (subjectLower.includes('important') || subjectLower.includes('action required')) {\n    priority = 'high';\n  }\n  \n  // Build YAML event file content\n  const yaml = `---\\ntype: email_received\\nsource: n8n\\npriority: ${priority}\\ntimestamp: ${now.toISOString()}\\nprocessed: false\\ngmail_message_id: ${messageId}\\n---\\n# Email: ${subject || '(no subject)'}\\n\\n**From**: ${from}\\n**To**: ${to}\\n**CC**: ${cc || 'none'}\\n**Date**: ${date}\\n\\n## Body Preview\\n\\n${snippet}\\n\\n## Action Needed\\n\\nRoute this event to the appropriate handler based on content type.
+      },
+      "id": "code-01",
+      "name": "Transform to Event YAML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.filename }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "isNotEmpty" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-01",
+      "name": "Has Events?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [600, 0]
+    },
+    {
+      "parameters": {
+        "command": "={{ 'echo ' + $json.encoded + ' | base64 -d > /path/to/your/events/' + $json.filename }}"
+      },
+      "id": "exec-01",
+      "name": "Write Event File",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [780, 0]
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Transform to Event YAML').item.json.messageId }}"
+      },
+      "id": "gmail-02",
+      "name": "Mark as Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [960, 0],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "Gmail - your-email@example.com"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every 5 Minutes": {
+      "main": [[{ "node": "Get Unread Emails", "type": "main", "index": 0 }]]
+    },
+    "Get Unread Emails": {
+      "main": [[{ "node": "Transform to Event YAML", "type": "main", "index": 0 }]]
+    },
+    "Transform to Event YAML": {
+      "main": [[{ "node": "Has Events?", "type": "main", "index": 0 }]]
+    },
+    "Has Events?": {
+      "main": [
+        [{ "node": "Write Event File", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Write Event File": {
+      "main": [[{ "node": "Mark as Read", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [{ "name": "" }]
+}
