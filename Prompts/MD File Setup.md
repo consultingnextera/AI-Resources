@@ -186,4 +186,4 @@ Once the vault is generated, these are the files worth personalizing before anyt
 
 Nextera Consulting helps businesses set up, customize, and run systems like this end to end — from the initial vault setup to building out a full agent stack that runs autonomously.
 
-**consulting.nextera@gmail.com** | **https://nexteraconsult.com/ai**
+**consulting.nextera@gmail.com** |
