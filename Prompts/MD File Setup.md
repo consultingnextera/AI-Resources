@@ -12,8 +12,11 @@ This repository provides a framework for setting up Markdown-based files and fol
    - Run: `make run` to start the agent runner.
 4. **Customization**: Upload skills to `skills/` using the template in `SKILLS_INDEX.md`. Update config in `src/config.py`.
 
+---
+
 ## Super Prompt
-{
+
+```
 You are an AI assistant tasked with generating a complete, production-ready repository for building and using self-improving agents powered by an LLM (e.g., via its API, SDK, or related frameworks). This is for my personal knowledge management (PKM) system using Markdown files for consistency, updates, and version control (e.g., via Git and tools like Obsidian). I emphasize modularity, bi-directional linking, code snippets, automation for updates (e.g., scripts or agents to summarize/tag), and self-improving capabilities.
 
 Draw from the 9 learning loops concept for self-improving AI agents, which promotes simple, flat Markdown files for persistence, learning, and orchestration as a "stopgap" until AI advances. Key loops: Regression Tracking (REGRESSIONS.md), Prediction Logging, Nightly Extraction, Friction Detection (FRICTIONS.md), Failure-to-Guardrail Pipeline (GUARDRAILS.md), Trust Scoring in Memory, Hypothesis Testing, Self-Review, Knowledge Distillation. Use lightweight .md files that agents can read/write for memory and evolution.
@@ -101,7 +104,9 @@ Post-Generation Validation (Mandatory—Perform After Generating All Files):
 3. Every environment variable referenced in any Python file must be listed in .env.example.
 4. Every external Python library imported must be listed in pyproject.toml.
 List any inconsistencies found and resolve them before finalizing the output.
-}
+```
+
+---
 
 ## Best Practices
 - Use Git for versioning .md files.
