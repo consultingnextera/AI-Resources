@@ -1,4 +1,4 @@
-# Rules Generator
+# Cursor Rules Generator
 
 ## What This Is
 
@@ -23,15 +23,18 @@ The content is the same — just rename based on your tool.
 
 ---
 
-## How to Use This
-
-Copy the prompt below, paste it into any LLM, and answer the questions. The AI will generate a complete rules file ready to drop into your project.
+**Two ways to use this:**
+- **Paste the whole file into an LLM** — it will interview you and fill out the template at the bottom
+- **Copy just the template** — scroll to the bottom and fill it in directly
 
 ---
 
-## The Prompt
+## LLM Instructions
 
-```
+Read this file, then conduct the following interview with me. Ask one section at a time and wait for my answers. When I've answered everything, fill out the template at the bottom of this file.
+
+---
+
 You are helping me generate an AI coding rules file for my project. This file will be loaded by my AI coding assistant (Cursor, Windsurf, Claude Code, or similar) at the start of every session so it understands my project without me having to re-explain anything.
 
 Ask me the following questions. Wait for my answers before generating anything. If my answers are incomplete, ask one targeted follow-up. When I've answered everything, generate the complete rules file.
@@ -118,7 +121,6 @@ Once I've answered, generate a complete rules file with these sections:
 Write it in plain, direct language — instructions not descriptions. Use bullet points and short sentences. The AI reading this file needs to apply these rules, not understand the philosophy behind them.
 
 Flag any gaps where more detail from me would make the rules more effective.
-```
 
 ---
 
@@ -145,3 +147,57 @@ Flag any gaps where more detail from me would make the rules more effective.
 **Commit it to git.** This file is part of your project. It should live in version control so it stays in sync as the project evolves and so collaborators benefit from it too.
 
 **Treat it as a living document.** The first version won't be perfect. Every time you correct your AI coding tool, ask yourself: "should this be in the rules file?" If you've corrected the same thing more than once — yes.
+
+
+---
+
+## Template
+
+If you'd rather fill this in yourself, copy and paste this into your project root as `cursor.rules`, `windsurf.rules`, or `CLAUDE.md`:
+
+```markdown
+# Project Overview
+[One paragraph: what this project does, who uses it, current state]
+
+# Tech Stack
+- Language: 
+- Framework: 
+- Database: 
+- Hosting: 
+- Key dependencies: 
+
+# Folder Structure
+[Describe your top-level folders and what lives in each]
+
+# Coding Conventions
+- Components: [functional / class-based]
+- State management: 
+- TypeScript: [yes/no, strict/loose]
+- Error handling: 
+- Tests: [yes/no, framework]
+
+# What To Always Do
+- 
+- 
+- 
+
+# What To Never Do
+- 
+- 
+- 
+
+# Current Focus
+[What you're actively building or fixing right now]
+
+# Known Issues & Workarounds
+[Any bugs, edge cases, or intentional TODOs the AI should know about]
+
+# Git & Deployment
+- Branch strategy: 
+- Commit format: 
+- Deploy process: 
+```
+
+---
+
+> **consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai)
