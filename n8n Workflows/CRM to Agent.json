@@ -1,0 +1,161 @@
+{
+  "name": "HubSpot CRM → Agent Events",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 10 }]
+        }
+      },
+      "id": "trigger-01",
+      "name": "Every 10 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 20,
+        "filters": {
+          "lastUpdatedAfter": "={{ $now.minus({ minutes: 11 }).toISO() }}"
+        },
+        "additionalFields": {
+          "properties": ["firstname", "lastname", "email", "company", "lifecyclestage", "hs_lead_status", "phone", "createdate", "notes_last_updated"]
+        }
+      },
+      "id": "hs-contacts-01",
+      "name": "Get Recent Contacts",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [220, -100],
+      "credentials": {
+        "hubspotApi": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "HubSpot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 20,
+        "filters": {
+          "lastUpdatedAfter": "={{ $now.minus({ minutes: 11 }).toISO() }}"
+        },
+        "additionalFields": {
+          "properties": ["dealname", "dealstage", "amount", "pipeline", "closedate", "hs_lastmodifieddate", "hubspot_owner_id"]
+        }
+      },
+      "id": "hs-deals-01",
+      "name": "Get Recent Deals",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [220, 100],
+      "credentials": {
+        "hubspotApi": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "HubSpot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transform HubSpot contacts into  event files\nconst items = $input.all();\nconst results = [];\n\nconst sanitize = (str) => String(str || 'none').replace(/[\\r\\n]+/g, ' ').replace(/---/g, '—').trim() || 'none';\n\nfor (const item of items) {\n  const c = item.json;\n  const contactId = c.id || 'unknown';\n  const props = c.properties || c;\n  \n  const firstName = sanitize(props.firstname);\n  const lastName = sanitize(props.lastname);\n  const fullName = `${firstName} ${lastName}`.trim();\n  const displayName = (fullName === 'none none' || fullName === 'none') ? 'Unknown Contact' : fullName;\n  const email = sanitize(props.email);\n  const company = sanitize(props.company);\n  const lifecycle = sanitize(props.lifecyclestage);\n  const leadStatus = sanitize(props.hs_lead_status);\n  const phone = sanitize(props.phone);\n  \n  const now = new Date();\n  const ts = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);\n  const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30) || 'unknown';\n  \n  let priority = 'normal';\n  if (lifecycle === 'opportunity' || lifecycle === 'customer') priority = 'high';\n  else if (lifecycle === 'subscriber') priority = 'low';\n  \n  const filename = `${ts}_crm_update_contact-${cleanName}.md`;\n  \n  const yaml = `---\\ntype: crm_update\\nsource: n8n\\npriority: ${priority}\\ntimestamp: ${now.toISOString()}\\nprocessed: false\\nhubspot_contact_id: ${contactId}\\n---\\n# CRM Update: Contact — ${displayName}\\n\\n**Name**: ${displayName}\\n**Email**: ${email}\\n**Phone**: ${phone}\\n**Company**: ${company}\\n**Lifecycle Stage**: ${lifecycle}\\n**Lead Status**: ${leadStatus}\\n\\n## Action Needed\\n\\nRoute this event to the appropriate handler based on content type.
+      },
+      "id": "code-contacts",
+      "name": "Transform Contacts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, -100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transform HubSpot deals into  event files\nconst items = $input.all();\nconst results = [];\n\nconst sanitize = (str) => String(str || 'none').replace(/[\\r\\n]+/g, ' ').replace(/---/g, '—').trim() || 'none';\n\nfor (const item of items) {\n  const d = item.json;\n  const dealId = d.id || 'unknown';\n  const props = d.properties || d;\n  \n  const dealName = sanitize(props.dealname) === 'none' ? 'Unnamed Deal' : sanitize(props.dealname);\n  const stage = sanitize(props.dealstage);\n  const amount = props.amount || '0';\n  const pipeline = sanitize(props.pipeline);\n  const closeDate = sanitize(props.closedate);\n  \n  const now = new Date();\n  const ts = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);\n  const cleanDeal = dealName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30) || 'deal';\n  \n  let priority = 'normal';\n  if (stage === 'closedwon' || stage === 'closedlost') priority = 'high';\n  else if (parseFloat(amount) > 5000) priority = 'high';\n  \n  const filename = `${ts}_crm_update_deal-${cleanDeal}.md`;\n  \n  const yaml = `---\\ntype: crm_update\\nsource: n8n\\npriority: ${priority}\\ntimestamp: ${now.toISOString()}\\nprocessed: false\\nhubspot_deal_id: ${dealId}\\n---\\n# CRM Update: Deal — ${dealName}\\n\\n**Deal Name**: ${dealName}\\n**Stage**: ${stage}\\n**Amount**: $${amount}\\n**Pipeline**: ${pipeline}\\n**Expected Close**: ${closeDate}\\n\\n## Action Needed\\n\\nRoute this event to the appropriate handler based on content type.
+      },
+      "id": "code-deals",
+      "name": "Transform Deals",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 100]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "merge-01",
+      "name": "Merge All CRM Events",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.filename }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "isNotEmpty" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-01",
+      "name": "Has Events?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [820, 0]
+    },
+    {
+      "parameters": {
+        "command": "={{ 'echo ' + $json.encoded + ' | base64 -d > /path/to/your/events/' + $json.filename }}"
+      },
+      "id": "exec-01",
+      "name": "Write Event File",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1000, 0]
+    }
+  ],
+  "connections": {
+    "Every 10 Minutes": {
+      "main": [
+        [
+          { "node": "Get Recent Contacts", "type": "main", "index": 0 },
+          { "node": "Get Recent Deals", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Get Recent Contacts": {
+      "main": [[{ "node": "Transform Contacts", "type": "main", "index": 0 }]]
+    },
+    "Get Recent Deals": {
+      "main": [[{ "node": "Transform Deals", "type": "main", "index": 0 }]]
+    },
+    "Transform Contacts": {
+      "main": [[{ "node": "Merge All CRM Events", "type": "main", "index": 0 }]]
+    },
+    "Transform Deals": {
+      "main": [[{ "node": "Merge All CRM Events", "type": "main", "index": 1 }]]
+    },
+    "Merge All CRM Events": {
+      "main": [[{ "node": "Has Events?", "type": "main", "index": 0 }]]
+    },
+    "Has Events?": {
+      "main": [
+        [{ "node": "Write Event File", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [{ "name": "" }]
+}
