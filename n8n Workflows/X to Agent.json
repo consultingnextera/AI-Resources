@@ -1,0 +1,220 @@
+{
+  "name": "X (Twitter) API → Agent Events",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 15 }]
+        }
+      },
+      "id": "trigger-01",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.x.com/2/users/me",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twitterOAuth2Api",
+        "options": {
+          "redirect": { "redirect": {} },
+          "response": {},
+          "timeout": 10000
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "user.fields", "value": "id,username" }
+          ]
+        }
+      },
+      "id": "http-me",
+      "name": "Get My User ID",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "X (Twitter)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://api.x.com/2/users/' + $json.data.id + '/mentions' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twitterOAuth2Api",
+        "options": {
+          "redirect": { "redirect": {} },
+          "response": {},
+          "timeout": 10000
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "max_results", "value": "10" },
+            { "name": "tweet.fields", "value": "created_at,author_id,text,public_metrics,conversation_id" },
+            { "name": "expansions", "value": "author_id" },
+            { "name": "user.fields", "value": "name,username,verified,public_metrics" },
+            { "name": "start_time", "value": "={{ $now.minus({ minutes: 16 }).toISO() }}" }
+          ]
+        }
+      },
+      "id": "http-mentions",
+      "name": "Get Recent Mentions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, -100],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "X (Twitter)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.x.com/2/dm_events",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twitterOAuth2Api",
+        "options": {
+          "redirect": { "redirect": {} },
+          "response": {},
+          "timeout": 10000
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "max_results", "value": "10" },
+            { "name": "dm_event.fields", "value": "created_at,sender_id,text,dm_conversation_id" },
+            { "name": "event_types", "value": "MessageCreate" }
+          ]
+        }
+      },
+      "id": "http-dms",
+      "name": "Get Recent DMs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 100],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "X (Twitter)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transform X mentions into  event files\n// Handles API errors, empty responses, and sanitizes all content\nconst resp = $input.first().json;\nconst results = [];\n\nconst sanitize = (str) => String(str || '').replace(/[\\r\\n]+/g, ' ').replace(/---/g, '—').replace(/`/g, \"'\").trim();\n\n// Check for API errors\nif (resp.errors || resp.status === 429 || !resp.data) {\n  // Return empty — workflow continues silently\n  return [{ json: { _empty: true } }];\n}\n\nconst tweets = resp.data || [];\nconst users = resp.includes?.users || [];\n\nconst userMap = {};\nfor (const u of users) {\n  userMap[u.id] = u;\n}\n\nfor (const tweet of tweets) {\n  const tweetId = tweet.id;\n  const author = userMap[tweet.author_id] || {};\n  const authorName = sanitize(author.name || 'Unknown');\n  const authorHandle = (author.username || 'unknown').replace(/[^a-zA-Z0-9_]/g, '');\n  const followers = author.public_metrics?.followers_count || 0;\n  const verified = author.verified || false;\n  const text = sanitize(tweet.text || '');\n  const metrics = tweet.public_metrics || {};\n  const createdAt = tweet.created_at || new Date().toISOString();\n  \n  const now = new Date();\n  const ts = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);\n  \n  let priority = 'normal';\n  if (verified || followers > 10000) priority = 'high';\n  else if (followers < 100) priority = 'low';\n  \n  const cleanHandle = authorHandle.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 20) || 'unknown';\n  const filename = `${ts}_social_mention_x-${cleanHandle}.md`;\n  \n  const yaml = `---\\ntype: agent_request\\nsource: n8n\\npriority: ${priority}\\ntimestamp: ${now.toISOString()}\\nprocessed: false\\nx_tweet_id: ${tweetId}\\n---\\n# X Mention from @${authorHandle}\\n\\n**Author**: ${authorName} (@${authorHandle})\\n**Followers**: ${followers.toLocaleString()}${verified ? ' (Verified)' : ''}\\n**Posted**: ${createdAt}\\n**Likes**: ${metrics.like_count || 0} | **Retweets**: ${metrics.retweet_count || 0} | **Replies**: ${metrics.reply_count || 0}\\n\\n## Tweet\\n\\n${text}\\n\\n## Action Needed\\n\\nRoute this event to the appropriate handler based on content type.
+      },
+      "id": "code-mentions",
+      "name": "Transform Mentions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, -100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transform X DMs into  event files\nconst resp = $input.first().json;\nconst results = [];\n\nconst sanitize = (str) => String(str || '').replace(/[\\r\\n]+/g, ' ').replace(/---/g, '—').replace(/`/g, \"'\").trim();\n\nif (resp.errors || resp.status === 429 || !resp.data) {\n  return [{ json: { _empty: true } }];\n}\n\nconst dms = resp.data || [];\n\nfor (const dm of dms) {\n  const dmId = dm.id;\n  const senderId = dm.sender_id || 'unknown';\n  const text = sanitize(dm.text || '');\n  const createdAt = dm.created_at || new Date().toISOString();\n  const conversationId = dm.dm_conversation_id || '';\n  \n  const now = new Date();\n  const ts = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);\n  \n  const filename = `${ts}_social_dm_x-${senderId.replace(/[^a-z0-9]/g, '').slice(0, 12)}.md`;\n  \n  const yaml = `---\\ntype: agent_request\\nsource: n8n\\npriority: high\\ntimestamp: ${now.toISOString()}\\nprocessed: false\\nx_dm_id: ${dmId}\\n---\\n# X Direct Message\\n\\n**Sender ID**: ${senderId}\\n**Conversation**: ${conversationId}\\n**Received**: ${createdAt}\\n\\n## Message\\n\\n${text}\\n\\n## Action Needed\\n\\nrouting-agent: DMs are always high priority — someone is reaching out directly.\\n
+      },
+      "id": "code-dms",
+      "name": "Transform DMs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 100]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "merge-01",
+      "name": "Merge Mentions + DMs",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.filename }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "isNotEmpty" }
+            },
+            {
+              "leftValue": "={{ $json._empty }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "notEquals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-01",
+      "name": "Has Events?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1020, 0]
+    },
+    {
+      "parameters": {
+        "command": "={{ 'echo ' + $json.encoded + ' | base64 -d > /path/to/your/events/' + $json.filename }}"
+      },
+      "id": "exec-01",
+      "name": "Write Event File",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1200, 0]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": {
+      "main": [[{ "node": "Get My User ID", "type": "main", "index": 0 }]]
+    },
+    "Get My User ID": {
+      "main": [
+        [
+          { "node": "Get Recent Mentions", "type": "main", "index": 0 },
+          { "node": "Get Recent DMs", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Get Recent Mentions": {
+      "main": [[{ "node": "Transform Mentions", "type": "main", "index": 0 }]]
+    },
+    "Get Recent DMs": {
+      "main": [[{ "node": "Transform DMs", "type": "main", "index": 0 }]]
+    },
+    "Transform Mentions": {
+      "main": [[{ "node": "Merge Mentions + DMs", "type": "main", "index": 0 }]]
+    },
+    "Transform DMs": {
+      "main": [[{ "node": "Merge Mentions + DMs", "type": "main", "index": 1 }]]
+    },
+    "Merge Mentions + DMs": {
+      "main": [[{ "node": "Has Events?", "type": "main", "index": 0 }]]
+    },
+    "Has Events?": {
+      "main": [
+        [{ "node": "Write Event File", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [{ "name": "" }]
+}
