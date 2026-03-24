@@ -221,7 +221,7 @@ MEMORY.md — Long-term memory store. Include YAML entry template with required 
 CURRENT_STATE.md — Active system state. Include sections: What's Working (infrastructure and agents), Pending Actions, Active Todos.
 TASK_PLAN.md — Current task queue. Include columns: Task ID, Description, Status, Priority, Assignee, Updated.
 LEARNINGS.md — Rules extracted from past mistakes. Start with 5 template entries demonstrating the format.
-VOICE_PROFILE.md — Noah Voice style guide. Include sections: core voice attributes, banned phrases list, platform-specific tone, formatting rules (LinkedIn vs email vs internal docs).
+VOICE_PROFILE.md — Your voice style guide. Include sections: core voice attributes, banned phrases list, platform-specific tone, formatting rules (LinkedIn vs email vs internal docs).
 SCRATCHPAD.md — Temporary working space, cleared between sessions.
 
 ---
@@ -398,4 +398,7 @@ These are the files to personalize before your first session:
 
 Nextera Consulting builds and customizes systems like this end to end — from vault setup and agent configuration to n8n workflow builds and ongoing optimization.
 
-**consulting.nextera@gmail.com** | **nexteraconsult.com/ai**
+**consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai) 
+---
+
+> **consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai)
