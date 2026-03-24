@@ -142,8 +142,7 @@ Be opinionated. If there's a better way to do something than what I described, s
 
 ---
 
-> Want someone to build it for you? Nextera builds n8n automations for B2B businesses.
-> **consulting.nextera@gmail.com** | **nexteraconsult.com/ai**
+> Want someone to build it for you? **consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai)
 
 ---
 
