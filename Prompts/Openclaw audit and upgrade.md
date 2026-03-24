@@ -1,175 +1,158 @@
-# OpenClaw Skill Conversion Prompt
+---
+title: "Research Prompt Template — Ideal Autonomous Personal Agent System"
+version: "1.0"
+purpose: >
+  Send to multiple LLMs (Grok, Gemini, ChatGPT, Claude, etc.) to gather design
+  perspectives on your autonomous agent setup. Fill in every [PLACEHOLDER] with
+  your own system details before sending.
+license: MIT
+---
 
-## Context
+<!--
+HOW TO USE THIS TEMPLATE
+========================
+1. Replace every [PLACEHOLDER] with your own system details.
+2. Delete any sections that don't apply to your setup.
+3. Add sections that reflect capabilities unique to your system.
+4. Send the filled-in version to multiple LLMs and compare responses.
+5. The questions in sections A–J are the valuable part — keep them as-is.
+-->
 
-I am uploading 5 skill files that were originally built for Claude.ai's skill system. I need you to convert them into native OpenClaw vault files that match the conventions of my existing PersonalOS vault. Below is everything you need to know to do this correctly.
+# Research Prompt — Ideal Autonomous Personal Agent System
+
+> **Instructions for the LLM receiving this prompt:** You are acting as a senior systems architect specializing in autonomous AI agent infrastructure. I'm going to describe my current setup, what it does well, and where I think the gaps are. I want you to design what the *best possible version* of this system looks like in [CURRENT MONTH + YEAR] — not theoretical, but buildable with tools that exist today. Be opinionated. Pick sides. Tell me what to keep, what to kill, and what to add.
 
 ---
 
-## The 5 Skills Being Converted
+## My Current System
 
-1. `vibe-code` — YC vibe coding methodology for AI-assisted coding sessions
-2. `frontend-design` — Frontend design and build guidance
-3. `workflow-creator` — Full automation workflow lifecycle (design → build → document)
-4. `linkedin-content` — LinkedIn content creation in your founder voice
-5. `client-deliverable` — Client-facing documents (proposals, SOWs, project updates, etc.)
+I run a [24/7 autonomous / on-demand] personal AI system called **[YOUR SYSTEM NAME]** on [YOUR INFRASTRUCTURE — e.g. a VPS, a local machine, a cloud VM]. Here's the architecture:
 
----
+### Runtime
+- **[YOUR AI RUNTIME/FRAMEWORK]** (v[VERSION]) — [one-line description of what it does]
+- Installed via [install method — e.g. npx, pip, docker]
+- [How it's exposed — e.g. gateway on loopback port XXXX, public API, local only]
+- [How you access it — e.g. Tailscale, SSH tunnel, direct]
 
-## My Vault Conventions — Match These Exactly
+### Orchestration
+- **[YOUR ORCHESTRATOR NAME]** routes all tasks to specialist agents using [your pattern — e.g. hub-and-spoke, DAG, event-driven]
+- [Describe what the orchestrator does and doesn't do — e.g. "never does specialist work, only classifies and delegates"]
+- Model: [MODEL NAME] — [why you chose it, e.g. cheap/fast for routing]
 
-### YAML Frontmatter
-Every file in my vault uses this schema. Reformat every skill to match:
+### Specialist Agents ([N] total)
+<!--
+List your agents. If you don't have named agents, describe your tool/function setup instead.
+-->
 
-```yaml
----
-title: "SKILL_NAME"
-status: active
-domain: [system | content | code | business]
-updated: [today's date in YYYY-MM-DD]
-tags: [skill, relevant-tags]
-read_when:
-  - [specific condition that should trigger an agent to load this file]
-  - [another condition if applicable]
----
-```
+| Agent | Role | Model |
+|-------|------|-------|
+| [NAME] | [ROLE] | [MODEL] |
+| [NAME] | [ROLE] | [MODEL] |
+| [NAME] | [ROLE] | [MODEL] |
+| *(add rows as needed)* | | |
 
-The `read_when` field is critical — it tells agents when to load this file without Zeus having to hardcode it. Be specific. Example: `"When Daedalus receives any frontend build or UI task"` not just `"frontend tasks"`.
+### Memory & Persistence
+- **[PRIMARY MEMORY STORE]**: [description — e.g. markdown files in a git-versioned folder, SQLite, vector DB]
+- **[SECONDARY STORE if any]**: [description — e.g. Supabase/PostgreSQL for structured data]
+- [Any memory quality rules — e.g. trust scoring, TTLs, compaction thresholds]
 
-### Internal File References
-Use wiki-style links for all internal vault references:
-- `[[NEXTERA.md]]` not "see NEXTERA.md"
-- `[[memory/VOICE_PROFILE.md]]` not "load voice profile"
-- `[[agents/REGISTRY.md]]` etc.
+### Automation
+- **[HEARTBEAT/PULSE]**: [frequency and what it does — e.g. 6-hour sync: git sync, memory watchdog, task audit]
+- **[NIGHTLY/SCHEDULED JOB]**: [description — e.g. 03:00 nightly audit: maintenance, inbox, security scan]
+- **Cron jobs**: [list with times — e.g. backup at 02:00, digest at 04:00, memory index 4x daily]
+- **[WEEKLY JOB if any]**: [description]
 
-### File Location
-All 5 skills go into: `~/PersonalOS/skills/`
-Filename format: `SKILL_NAME.md` (all caps, matching vault convention)
+### Learning Loops ([N] defined)
+[List your learning loop types — e.g. regression tracking, prediction logging, nightly extraction, friction detection, trust scoring, self-review, etc.]
 
----
+### Security Model
+- [Access method — e.g. Tailscale ZTNA / no public ports, VPN, public with auth]
+- [Auth method — e.g. pubkey SSH only, API key, OAuth]
+- [Secrets handling — e.g. secrets.env only, never in git]
+- [Hard gate mechanism if any — e.g. security agent must approve all code/deploy changes]
+- [Autonomy boundaries — e.g. what the system can do without asking vs. what requires approval]
 
-## Agent Routing — Wire Each Skill to the Right Agent
-
-After converting the files, update `agents/REGISTRY.md` to add a `read_when` or boot sequence entry for each skill under the relevant agent. The routing is:
-
-| Skill | Primary Agent | When to Load |
-|---|---|---|
-| `vibe-code` | Daedalus | Any coding, debugging, or build task |
-| `frontend-design` | Daedalus | Any frontend, UI, landing page, or web build task |
-| `workflow-creator` | Daedalus + Athena | Any automation build, n8n workflow, or AI pipeline task |
-| `linkedin-content` | Calliope | Any LinkedIn post, content creation, or social media task |
-| `client-deliverable` | Athena | Any proposal, SOW, discovery recap, project update, or client doc task |
-
-Add these to the **Boot Sequence** or **Context Files** section of each agent's definition in `REGISTRY.md`. Do not add new agents — wire into existing ones only.
+### Infrastructure
+- [VPS/cloud/local setup]
+- [Dashboard if any — e.g. Next.js dashboard at your-domain.com]
+- [Version control setup — e.g. Mac ↔ VPS sync via git]
+- [Model routing layer if any — e.g. OpenRouter, LiteLLM, direct API calls]
 
 ---
 
-## NEXTERA.md Handling — Remove Bundled Copies
+## What Works Well
+<!--
+Be honest. What parts of your system are you confident in?
+-->
+1. [WHAT WORKS #1]
+2. [WHAT WORKS #2]
+3. [WHAT WORKS #3]
+4. *(add as needed)*
 
-`linkedin-content` and `client-deliverable` currently include their own bundled copy of `NEXTERA.md`. Remove those embedded copies. Replace all references with `[[NEXTERA.md]]` pointing to the real file that already exists in the vault root.
-
----
-
-## Voice Profile — Calliope Specific
-
-`linkedin-content` currently references `NEXTERA.md` for voice guidance. Inside OpenClaw, Calliope uses `memory/VOICE_PROFILE.md` as the authoritative voice source. In the converted `linkedin-content` skill:
-
-- Replace any "load NEXTERA.md for brand voice" instructions with `[[memory/VOICE_PROFILE.md]]`
-- Keep `[[NEXTERA.md]]` references only for business facts (proof points, pricing, client names)
-- The skill should function as a **format and hook reference** that Calliope reads during her Step 4 (generate full package) — it should complement her existing workflow, not replace it
-- Do not duplicate Calliope's existing brief → duplicate check → generate → revision loop. The skill provides the LinkedIn-specific format rules and voice calibration only.
-
----
-
-## SKILLS_INDEX.md
-
-Check whether `skills/SKILLS_INDEX.md` exists in the vault.
-
-**If it exists:** Append all 5 new skills to it with this format:
-```markdown
-| [[SKILL_NAME.md]] | [one sentence description] | [primary agent] | [date added] |
-```
-
-**If it does not exist:** Create `skills/SKILLS_INDEX.md` with this structure:
-```markdown
----
-title: "SKILLS INDEX"
-status: active
-domain: system
-updated: [today's date]
-tags: [skills, index, reference]
----
-
-# Skills Index
-
-Reference list of all skills available to agents in this vault.
-
-| Skill | Purpose | Primary Agent | Added |
-|---|---|---|---|
-| [[VIBE-CODE.md]] | YC vibe coding methodology for AI-assisted sessions | Daedalus | [date] |
-| [[FRONTEND-DESIGN.md]] | Frontend design and build standards | Daedalus | [date] |
-| [[WORKFLOW-CREATOR.md]] | Automation workflow lifecycle — design to documentation | Daedalus, Athena | [date] |
-| [[LINKEDIN-CONTENT.md]] | LinkedIn content format and voice calibration | Calliope | [date] |
-| [[CLIENT-DELIVERABLE.md]] | Client-facing documents — proposals, SOWs, updates | Athena | [date] |
-```
+## Where I Think the Gaps Are
+<!--
+Be specific. Vague gaps get vague answers.
+-->
+1. [GAP #1 — e.g. task autonomy is limited, system monitors but rarely initiates]
+2. [GAP #2 — e.g. everything is cron-based, no real-time event triggers]
+3. [GAP #3 — e.g. memory retrieval is brute-force, no semantic search]
+4. [GAP #4 — e.g. self-improvement loops are defined but not running]
+5. [GAP #5 — e.g. no external integrations beyond web search]
+6. *(add as needed)*
 
 ---
 
-## REFERENCE.md Update
+## What I Want You to Design
 
-Add all 5 skills to the `REFERENCE.md` skills section under the vault consistency rules. Match the existing table format used in that file.
+Design the ideal autonomous personal agent system for [DESCRIBE YOUR CONTEXT — e.g. a solo founder running a consulting business / a developer managing personal projects / a researcher synthesizing information]. The system should:
 
----
+1. **Run [WHERE] with [COST CONSTRAINT — e.g. < $100/month infrastructure, < $200/month API spend]**
+2. **Autonomously handle**: [LIST YOUR TARGET CAPABILITIES — e.g. task management, content pipeline, research, system maintenance, security monitoring]
+3. **React to real-time events** — not just cron schedules
+4. **Self-improve measurably** — learning loops that actually execute
+5. **Respect hard boundaries** — [YOUR NON-NEGOTIABLES — e.g. never spend money, publish content, or send messages without approval]
+6. **Scale gracefully** — adding a new capability shouldn't require restructuring
 
-## Structural Changes Per Skill
+### Specifically, I want your take on:
 
-### vibe-code + frontend-design
-- Minimal changes: reformat frontmatter, add `read_when`, add vault links where relevant
-- No NEXTERA or voice references to update
-- Add to Daedalus boot sequence in REGISTRY.md
+**A. Architecture** — Is [YOUR CURRENT PATTERN — e.g. hub-and-spoke] still the right orchestration model? Should I move to a different pattern (DAG-based, event-driven, hierarchical, mesh)? What's the tradeoff?
 
-### workflow-creator
-- Reformat frontmatter, add `read_when`
-- In Phase 4 (client documentation), add reference to `[[CLIENT-DELIVERABLE.md]]` as the formatting standard for the output doc
-- Wire to both Daedalus (build phase) and Athena (planning phase) in REGISTRY.md
+**B. Memory** — Should I stay with [YOUR CURRENT MEMORY APPROACH], move to a vector DB (ChromaDB, Qdrant), or hybrid? How should retrieval work at scale? What about episodic vs semantic vs procedural memory separation?
 
-### linkedin-content
-- Reformat frontmatter, add `read_when`
-- Remove bundled NEXTERA.md copy
-- Replace voice references with `[[memory/VOICE_PROFILE.md]]`
-- Keep business fact references pointing to `[[NEXTERA.md]]`
-- Restructure as a Calliope reference file, not a standalone workflow
-- Wire into Calliope's Context Files in REGISTRY.md
+**C. Automation triggers** — What should drive agent activity beyond cron? Webhooks? File watchers? Message queues? What's the simplest path to event-driven behavior on [YOUR INFRASTRUCTURE]?
 
-### client-deliverable
-- Reformat frontmatter, add `read_when`
-- Remove bundled NEXTERA.md copy
-- Replace with `[[NEXTERA.md]]` links to specific sections (Section 3 for proof points, Section 5 for pricing, Section 8 for voice)
-- Wire into Athena's Context Files in REGISTRY.md
+**D. Self-improvement** — Of my [N] learning loops, which are actually valuable? What should the self-improvement cycle look like in practice (not theory)?
 
----
+**E. External integrations** — What's the minimum set of integrations that would unlock the most autonomous value for [YOUR CONTEXT — e.g. a consultant, a developer, a researcher]? (Email, calendar, Slack, financial data, CRM, etc.)
 
-## Git Commit
+**F. Agent design** — Are [N] specialists the right number? Too many? Too few? Should agents be more granular or more general? Should I use tool-calling agents instead of role-based agents?
 
-After all changes are complete, commit with:
-```
-[skills] add 5 converted skills from Claude skill system to vault
-```
+**G. Cost optimization** — How should I think about model selection per task? When does local inference (Ollama) make sense vs. API calls? How do I track and optimize API spend?
 
-Vault-only changes — commit directly to main per `loops/SAFETY_RULES.md`.
+**H. Filesystem & vault structure** — Is my current folder structure ([LIST YOUR TOP-LEVEL FOLDERS — e.g. memory/, loops/, agents/, tasks/, scripts/, src/]) optimal? What would you change?
+
+**I. Observability** — How should I monitor agent performance, task completion rates, memory quality, and system health? Dashboard? Logs? Alerts?
+
+**J. The one thing I'm not seeing** — What's the biggest blind spot in my current architecture? What would a world-class system have that mine doesn't?
 
 ---
 
-## Definition of Done
+## Constraints
+- [YOUR TECHNICAL LEVEL — e.g. non-technical founder who can read code and run commands but doesn't write from scratch / experienced developer / sysadmin]
+- [MAINTENANCE REQUIREMENT — e.g. must be maintainable by AI agents themselves / maintained manually / small team]
+- [RUNTIME CONSTRAINT if any — e.g. using OpenClaw as runtime, suggestions should work within it or clearly state if they require replacing it]
+- Privacy and security are non-negotiable — no data leaves the system without explicit approval
+- [PREFERENCE — e.g. prefer open-source and self-hosted over SaaS where feasible]
 
-- [ ] All 5 skill files are in `~/PersonalOS/skills/` with correct vault frontmatter
-- [ ] All internal references use `[[wiki-link]]` format
-- [ ] No bundled NEXTERA.md copies remain in any skill file
-- [ ] `agents/REGISTRY.md` updated with boot/context entries for all 5 skills
-- [ ] `skills/SKILLS_INDEX.md` exists and lists all 5 skills
-- [ ] `REFERENCE.md` updated to include skills section
-- [ ] Changes committed to main with correct commit message
--e 
 ---
 
-> **consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai)
+## Output Format
+
+Structure your response as:
+
+1. **Executive Summary** (3-5 sentences — what's the single most important upgrade?)
+2. **Architecture Recommendation** (with diagram description if helpful)
+3. **Answers to A through J** (be specific — name tools, models, patterns, not just concepts)
+4. **Prioritized Upgrade Roadmap** (what to do first, second, third — with estimated effort and impact)
+5. **What to Kill** (things in the current system that are dead weight or creating false confidence)
+6. **The Non-Obvious Insight** (one thing most people building these systems get wrong that I should avoid)
