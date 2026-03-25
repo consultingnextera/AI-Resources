@@ -14,18 +14,18 @@ Ten prompts that work as LLM interviews. Paste any file into Claude, ChatGPT, or
 
 | File | What It Produces |
 |---|---|
-| `01-Business-Context.md` | A persistent business context file (BUSINESS.md) any AI tool can load |
-| `02-User-Profile.md` | A user profile (USER.md) so agents understand who you are and how you work |
-| `03-Voice-Profile.md` | A voice style guide (VOICE_PROFILE.md) so AI writes in your tone, not generic AI |
-| `04-Memory-Setup.md` | Seed memory entries (MEMORY.md) for an AI agent system |
-| `05-Soul.md` | Character and values file (SOUL.md) for an AI orchestrator |
-| `06-Rules-Generator.md` | A rules file (`cursor.rules` / `windsurf.rules` / `CLAUDE.md`) for your AI coding tool |
-| `07-Automation-Finder.md` | A prioritized automation opportunities report for your business |
-| `08-n8n-Workflow-Designer.md` | A complete n8n workflow blueprint from a plain English process description |
-| `09-Openclaw-Setup.md` | Step-by-step guide to building a 24/7 autonomous agent system with OpenClaw |
-| `10-Openclaw-Audit.md` | A filled research prompt to send to multiple LLMs for architecture review |
+| `MD Files/BUSINESS.md` | A persistent business context file any AI tool can load |
+| `MD Files/USER.md` | A user profile so agents understand who you are and how you work |
+| `MD Files/VOICE_PROFILE.md` | A voice style guide so AI writes in your tone, not generic AI |
+| `MD Files/MEMORY.md` | Seed memory entries for an AI agent system |
+| `MD Files/SOUL.md` | Character and values file for an AI orchestrator |
+| `Rules Generator.md` | A rules file (`cursor.rules` / `windsurf.rules` / `CLAUDE.md`) for your AI coding tool |
+| `Automation Opportunity Finder.md` | A prioritized automation opportunities report for your business |
+| `n8n workflow designer.md` | A complete n8n workflow blueprint from a plain English process description |
+| `Openclaw Setup.md` | Step-by-step guide to building a 24/7 autonomous agent system with OpenClaw |
+| `Openclaw audit and upgrade.md` | A filled research prompt to send to multiple LLMs for architecture review |
 
-Files 01–05 are foundational context files — do these first. Files 06–08 are tools you'll use repeatedly. Files 09–10 are for building autonomous agent systems.
+Start with `MD Files/BUSINESS.md` and `MD Files/USER.md` — these two files make every AI interaction significantly more useful. The `MD Files/` prompts produce vault-ready context files. The rest are tools you'll use repeatedly.
 
 ---
 
@@ -35,8 +35,8 @@ Drop-in skill files for Claude's skill system. Load them once and Claude follows
 
 | File | What It Does |
 |---|---|
-| `Frontend-Design-SKILL.md` | 10-step process for building production-grade frontend interfaces — brief-faithful, responsive, never generic |
-| `Vibe-Code-SKILL.md` | YC vibe coding methodology for AI-assisted development — planning, version control, debugging, tool optimization |
+| `Frontend-design-SKILL.md` | 10-step process for building production-grade frontend interfaces — brief-faithful, responsive, never generic |
+| `Vibe-code-SKILL.md` | YC vibe coding methodology for AI-assisted development — planning, version control, debugging, tool optimization |
 
 ---
 
@@ -58,16 +58,16 @@ See `n8n Workflows/README.md` for setup instructions, event file format, and cus
 ## How to Use This Repo
 
 **Starting from scratch with AI tools:**
-Start with `01-Business-Context.md` and `02-User-Profile.md`. These two files, once filled out, make every AI interaction significantly more useful.
+Start with `MD Files/BUSINESS.md` and `MD Files/USER.md`. These two files, once filled out, make every AI interaction significantly more useful.
 
 **Building an agentic system:**
-Work through 01–05 to generate your context files, then follow `09-Openclaw-Setup.md` to stand up the system. Use `10-Openclaw-Audit.md` to get architecture feedback from multiple LLMs before you build.
+Work through the `MD Files/` prompts to generate your context files, then follow `Openclaw Setup.md` to stand up the system. Use `Openclaw audit and upgrade.md` to get architecture feedback from multiple LLMs before you build.
 
 **Automating a specific process:**
-Use `07-Automation-Finder.md` to find your highest-value automation opportunities, then `08-n8n-Workflow-Designer.md` to design the workflow. Import the matching JSON from `n8n Workflows/` if one exists for your service.
+Use `Automation Opportunity Finder.md` to find your highest-value automation opportunities, then `n8n workflow designer.md` to design the workflow. Import the matching JSON from `n8n Workflows/` if one exists for your service.
 
 **AI-assisted coding:**
-Install `Vibe-Code-SKILL.md` in Claude, then use `06-Rules-Generator.md` to generate a rules file for your project.
+Install `Vibe-code-SKILL.md` in Claude, then use `Rules Generator.md` to generate a rules file for your project.
 
 ---
 
