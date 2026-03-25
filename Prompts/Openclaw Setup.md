@@ -398,7 +398,6 @@ These are the files to personalize before your first session:
 
 Nextera Consulting builds and customizes systems like this end to end — from vault setup and agent configuration to n8n workflow builds and ongoing optimization.
 
-**consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai) 
 ---
 
 > **consulting.nextera@gmail.com** | [nexteraconsult.com/ai](https://nexteraconsult.com/ai)
