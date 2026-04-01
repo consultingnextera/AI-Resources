@@ -1,0 +1,211 @@
+{
+  "name": "Content Pipeline \u2014 Draft Notify (Supabase \u2192 Discord)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every 30 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, idea_id, platform, post_copy, hook_options, image_prompt, status, created_at FROM content_packages WHERE status = 'draft' AND notified_at IS NULL ORDER BY created_at ASC LIMIT 10;",
+        "additionalFields": {}
+      },
+      "id": "query-drafts",
+      "name": "Query Unnotified Drafts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        220,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REPLACE_WITH_POSTGRES_CREDENTIAL_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-has-results",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "filter-empty",
+      "name": "Has Drafts?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "botToken",
+        "resource": "message",
+        "operation": "send",
+        "channelId": "={{ $env.DISCORD_CONTENT_CHANNEL_ID }}",
+        "messageType": "embed",
+        "embeds": {
+          "values": [
+            {
+              "title": "\ud83d\udcdd New Draft: {{ $json.platform | capitalize }}",
+              "description": "{{ $json.post_copy.substring(0, 500) }}{{ $json.post_copy.length > 500 ? '...' : '' }}",
+              "color": "3447003",
+              "fields": {
+                "values": [
+                  {
+                    "name": "Platform",
+                    "value": "{{ $json.platform }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Package ID",
+                    "value": "{{ $json.id }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Created",
+                    "value": "{{ $json.created_at }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Image Prompt",
+                    "value": "{{ $json.image_prompt || 'None' }}",
+                    "inline": false
+                  }
+                ]
+              },
+              "footer": {
+                "text": "Reply: approve | revise: [notes] | kill"
+              }
+            }
+          ]
+        }
+      },
+      "id": "discord-send",
+      "name": "Post to Discord #content",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "REPLACE_WITH_DISCORD_BOT_CREDENTIAL_ID",
+          "name": "Your Discord Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE content_packages SET notified_at = NOW(), discord_message_id = '{{ $('Post to Discord #content').item.json.id }}' WHERE id = '{{ $('Query Unnotified Drafts').item.json.id }}';",
+        "additionalFields": {}
+      },
+      "id": "update-notified",
+      "name": "Mark as Notified",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        880,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REPLACE_WITH_POSTGRES_CREDENTIAL_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every 30 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Query Unnotified Drafts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Unnotified Drafts": {
+      "main": [
+        [
+          {
+            "node": "Has Drafts?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Drafts?": {
+      "main": [
+        [
+          {
+            "node": "Post to Discord #content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Discord #content": {
+      "main": [
+        [
+          {
+            "node": "Mark as Notified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "Content Pipeline"
+    }
+  ]
+}
