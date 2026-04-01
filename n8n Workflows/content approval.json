@@ -1,0 +1,404 @@
+{
+  "name": "Content Pipeline \u2014 Approve/Revise/Kill (Discord \u2192 Supabase)",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "botToken",
+        "resource": "message",
+        "event": "messageCreate",
+        "channelIds": "={{ $env.DISCORD_CONTENT_CHANNEL_ID }}"
+      },
+      "id": "discord-trigger",
+      "name": "Discord Message in #content",
+      "type": "n8n-nodes-base.discordTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "REPLACE_WITH_DISCORD_BOT_CREDENTIAL_ID",
+          "name": "Your Discord Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "id": "not-bot",
+              "leftValue": "={{ $json.author.bot }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "filter-bot",
+      "name": "Ignore Bot Messages",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the Discord message for commands\nconst content = $input.item.json.content.trim().toLowerCase();\nconst rawContent = $input.item.json.content.trim();\n\n// Try to extract package ID from the message being replied to\n// The embed footer or field contains the package UUID\nlet packageId = null;\nconst referenced = $input.item.json.message_reference;\nif (referenced) {\n  // Will need to look up the referenced message's embed\n  packageId = referenced.message_id;\n}\n\nlet action = 'unknown';\nlet revisionNotes = null;\n\nif (content === 'approve' || content.startsWith('approve')) {\n  action = 'approve';\n} else if (content.startsWith('revise:') || content.startsWith('revise ')) {\n  action = 'revise';\n  revisionNotes = rawContent.replace(/^revise[:\\s]*/i, '').trim();\n} else if (content === 'kill' || content.startsWith('kill')) {\n  action = 'kill';\n}\n\nreturn {\n  json: {\n    action,\n    revisionNotes,\n    discordMessageId: $input.item.json.message_reference?.message_id || null,\n    channelId: $input.item.json.channel_id,\n    rawContent: rawContent\n  }\n};"
+      },
+      "id": "parse-command",
+      "name": "Parse Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "id": "is-known-action",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "unknown",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "filter-unknown",
+      "name": "Valid Command?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT cp.id, cp.post_copy, cp.platform FROM content_packages cp WHERE cp.discord_message_id = '{{ $json.discordMessageId }}' AND cp.status = 'draft' LIMIT 1;",
+        "additionalFields": {}
+      },
+      "id": "lookup-package",
+      "name": "Find Package by Discord Message",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        880,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REPLACE_WITH_POSTGRES_CREDENTIAL_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Command').item.json.action }}",
+                    "rightValue": "approve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": "Approve"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Command').item.json.action }}",
+                    "rightValue": "revise",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": "Revise"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Command').item.json.action }}",
+                    "rightValue": "kill",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": "Kill"
+            }
+          ]
+        }
+      },
+      "id": "switch-action",
+      "name": "Route by Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1100,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE content_packages SET status = 'ready', updated_at = NOW() WHERE id = '{{ $('Find Package by Discord Message').item.json.id }}';",
+        "additionalFields": {}
+      },
+      "id": "approve-update",
+      "name": "Set Status: Ready",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1320,
+        -100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REPLACE_WITH_POSTGRES_CREDENTIAL_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE content_packages SET status = 'revision_requested', revision_notes = '{{ $('Parse Command').item.json.revisionNotes }}', updated_at = NOW() WHERE id = '{{ $('Find Package by Discord Message').item.json.id }}';",
+        "additionalFields": {}
+      },
+      "id": "revise-update",
+      "name": "Set Status: Revision Requested",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1320,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REPLACE_WITH_POSTGRES_CREDENTIAL_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "filePath": "/path/to/your/events/{{ new Date().toISOString().replace(/[:.]/g, '-') }}_content_revision_requested.md",
+        "options": {},
+        "fileContent": "---\nevent_type: content_revision_requested\npackage_id: {{ $('Find Package by Discord Message').item.json.id }}\nplatform: {{ $('Find Package by Discord Message').item.json.platform }}\nrevision_notes: {{ $('Parse Command').item.json.revisionNotes }}\ntimestamp: {{ new Date().toISOString() }}\n---\n\n[Content Agent]: revise this draft. Notes from [User]: {{ $('Parse Command').item.json.revisionNotes }}\n\nOriginal post_copy:\n{{ $('Find Package by Discord Message').item.json.post_copy }}"
+      },
+      "id": "write-event",
+      "name": "Write Revision Event File",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE content_packages SET status = 'archived', updated_at = NOW() WHERE id = '{{ $('Find Package by Discord Message').item.json.id }}';",
+        "additionalFields": {}
+      },
+      "id": "kill-update",
+      "name": "Set Status: Archived",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1320,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REPLACE_WITH_POSTGRES_CREDENTIAL_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "botToken",
+        "resource": "message",
+        "operation": "send",
+        "channelId": "={{ $json.channelId || $('Discord Message in #content').item.json.channel_id }}",
+        "content": "\u2705 Done. Status updated."
+      },
+      "id": "confirm-reply",
+      "name": "Confirm in Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2.2,
+      "position": [
+        1540,
+        -100
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "REPLACE_WITH_DISCORD_BOT_CREDENTIAL_ID",
+          "name": "Your Discord Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Discord Message in #content": {
+      "main": [
+        [
+          {
+            "node": "Ignore Bot Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ignore Bot Messages": {
+      "main": [
+        [
+          {
+            "node": "Parse Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Command": {
+      "main": [
+        [
+          {
+            "node": "Valid Command?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Command?": {
+      "main": [
+        [
+          {
+            "node": "Find Package by Discord Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Package by Discord Message": {
+      "main": [
+        [
+          {
+            "node": "Route by Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action": {
+      "main": [
+        [
+          {
+            "node": "Set Status: Ready",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Status: Revision Requested",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Status: Archived",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Status: Ready": {
+      "main": [
+        [
+          {
+            "node": "Confirm in Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Status: Revision Requested": {
+      "main": [
+        [
+          {
+            "node": "Write Revision Event File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Status: Archived": {
+      "main": [
+        [
+          {
+            "node": "Confirm in Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "Content Pipeline"
+    }
+  ]
+}
