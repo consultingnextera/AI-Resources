@@ -12,7 +12,7 @@
 
         :root {
             --bg: #0a0a0f;
-            --card: #1a1a24;
+            --card: #12121a;
             --accent: #00d4ff;
             --accent2: #7b5cff;
         }
@@ -22,89 +22,96 @@
             background: var(--bg);
             color: #f0f0f5;
             margin: 0;
-            padding: 80px 20px;
-            line-height: 1.7;
+            padding: 100px 20px 80px;
+            line-height: 1.75;
             min-height: 100vh;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
         }
 
         .container {
             max-width: 920px;
             margin: 0 auto;
             background: var(--card);
-            border-radius: 20px;
-            padding: 60px 50px;
-            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.08);
+            border-radius: 24px;
+            padding: 64px 56px;
+            box-shadow: 0 25px 70px rgba(0, 212, 255, 0.12);
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(0, 212, 255, 0.12);
+            border: 1px solid rgba(0, 212, 255, 0.15);
         }
 
         .container::before {
             content: '';
             position: absolute;
-            top: -180px;
-            right: -180px;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.18) 0%, transparent 70%);
+            top: -220px;
+            right: -220px;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.22) 0%, transparent 65%);
             z-index: 0;
+            opacity: 0.6;
         }
 
         h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 3.4rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             background: linear-gradient(90deg, #00d4ff, #7b5cff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            line-height: 1.05;
         }
 
         .tagline {
-            font-size: 1.5rem;
+            font-size: 1.55rem;
             color: #a0a0b0;
-            margin-bottom: 32px;
+            margin-bottom: 36px;
+            font-weight: 500;
         }
 
         h2 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.2rem;
-            margin: 48px 0 24px;
+            font-size: 2.3rem;
+            margin: 56px 0 28px;
             color: #f0f0f5;
         }
 
         .projects {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(0, 212, 255, 0.15);
-            padding: 36px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 40px;
             border-radius: 16px;
-            margin: 40px 0;
+            margin: 48px 0;
         }
 
         .cta {
             display: inline-block;
-            margin: 32px 0;
-            padding: 18px 36px;
+            margin: 40px 0 20px;
+            padding: 18px 40px;
             background: linear-gradient(90deg, var(--accent), var(--accent2));
             color: #000;
             font-weight: 700;
             border-radius: 12px;
-            font-size: 1.22rem;
+            font-size: 1.25rem;
             text-decoration: none;
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
-            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.35);
+            transition: all 0.3s ease;
         }
 
         .cta:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 18px 40px rgba(0, 212, 255, 0.45);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Nextera Consulting</h1>
-        <p class="tagline">AI Automation &amp; Operations</p>
+        <p class="tagline">AI Automation &amp; Operations Consulting</p>
         
         <p>We build custom AI workflows and automation systems that help businesses scale output <strong>without scaling headcount</strong>.</p>
         
@@ -122,7 +129,7 @@
         
         <a href="https://www.nexteraconsult.com/link" target="_blank" rel="noopener" class="cta">Try the Free Nextera AI Hub →</a>
         
-        <p style="margin-top: 40px; font-size: 1.18rem;">
+        <p style="margin-top: 40px; font-size: 1.2rem;">
             Ready to eliminate manual work? 
             <a href="https://calendly.com/noah-nexteraconsulting/ops-audit" target="_blank" rel="noopener"><strong>Book a free operations audit</strong></a>.
         </p>
