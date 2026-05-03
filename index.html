@@ -6,81 +6,142 @@
     <meta name="google-site-verification" content="iZ8Rav5v8Tyy4qq_2fhdtOUiFk1_c6S_vyRNDysSVuI" />
     <meta name="description" content="Nextera Consulting - AI Automation & Operations Consulting. Custom AI workflows and tools that scale your business without increasing headcount.">
     <title>Nextera Consulting | AI Automation & Operations</title>
+    
     <style>
-        body { 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap');
+
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0b5ed7;
+            --bg: #f8f9fc;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 40px 20px;
-            line-height: 1.7;
-            color: #333;
-            max-width: 860px;
+            padding: 80px 20px 60px;
+            line-height: 1.8;
+            color: #222;
+            background: linear-gradient(135deg, #f8f9fc 0%, #f0f2f9 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 920px;
             margin-left: auto;
             margin-right: auto;
-            background: #ffffff;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            padding: 60px 50px;
+            position: relative;
+            overflow: hidden;
         }
-        h1 { 
-            color: #0d6efd; 
-            font-size: 2.4em;
-            margin-bottom: 8px;
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(13, 110, 253, 0.08) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
         }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+            line-height: 1.05;
+        }
+
         .tagline {
-            font-size: 1.35em;
-            color: #555;
-            margin-bottom: 30px;
+            font-size: 1.55rem;
+            color: #475569;
+            margin-bottom: 36px;
+            font-weight: 500;
         }
-        h2 { 
-            color: #0d6efd; 
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            color: #0f172a;
+            margin: 52px 0 24px;
         }
-        ul { 
-            padding-left: 20px; 
+
+        p {
+            font-size: 1.15rem;
+            color: #334155;
         }
-        li { 
-            margin: 16px 0; 
-            font-size: 1.1em;
+
+        ul {
+            padding-left: 28px;
         }
-        a { 
-            color: #0d6efd; 
-            text-decoration: none;
+
+        li {
+            margin: 20px 0;
+            font-size: 1.13rem;
         }
-        a:hover { 
-            text-decoration: underline; 
-        }
+
         .cta {
             display: inline-block;
-            margin: 30px 0;
-            padding: 12px 24px;
-            background: #0d6efd;
+            margin: 40px 0 20px;
+            padding: 18px 36px;
+            background: var(--primary);
             color: white;
-            border-radius: 6px;
+            border-radius: 12px;
             font-weight: 600;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 25px rgba(13, 110, 253, 0.25);
+            transition: all 0.3s ease;
         }
+
         .cta:hover {
-            background: #0b5ed7;
+            background: var(--primary-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(13, 110, 253, 0.35);
             color: white;
+            text-decoration: none;
+        }
+
+        .projects {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 36px;
+            border-radius: 16px;
+            margin: 48px 0;
         }
     </style>
 </head>
 <body>
-    <h1>Nextera Consulting</h1>
-    <p class="tagline">AI Automation &amp; Operations Consulting</p>
-    
-    <p>We build custom AI workflows and automation systems that help businesses scale output without scaling headcount.</p>
-    
-    <h2>Our Projects &amp; Tools</h2>
-    <ul>
-        <li><strong>Main Site:</strong> <a href="https://www.nexteraconsult.com/link" target="_blank" rel="noopener">Nextera Consulting – AI Automation Services</a></li>
-        <li><strong>Idea Spark:</strong> <a href="https://www.ideaspark.nexteraconsult.com" target="_blank" rel="noopener">ideaspark.nexteraconsult.com</a></li>
-        <li><strong>AI Passport:</strong> <a href="https://www.ai-passport.nexteraconsult.com" target="_blank" rel="noopener">ai-passport.nexteraconsult.com</a></li>
-        <li><strong>Gatekeeper:</strong> <a href="https://www.gatekeeper.nexteraconsult.com" target="_blank" rel="noopener">gatekeeper.nexteraconsult.com</a></li>
-        <li><strong>Pulse Tracker:</strong> <a href="https://www.pulse-tracker.nexteraconsult.com" target="_blank" rel="noopener">pulse-tracker.nexteraconsult.com</a></li>
-    </ul>
-    
-    <a href="https://www.nexteraconsult.com/link" target="_blank" rel="noopener" class="cta">Try the Free Nextera AI Hub →</a>
-    
-    <p>Ready to eliminate manual work and scale smarter? 
-       <a href="https://nexteraconsult.com" target="_blank" rel="noopener">Book a free operations audit</a>.
-    </p>
+    <div class="container">
+        <h1>Nextera Consulting</h1>
+        <p class="tagline">AI Automation &amp; Operations Consulting</p>
+       
+        <p>We build custom AI workflows and automation systems that help businesses scale output <strong>without scaling headcount</strong>.</p>
+       
+        <h2>Our Projects &amp; Tools</h2>
+        
+        <div class="projects">
+            <ul>
+                <li><strong>Main Site &amp; AI Hub:</strong> <a href="https://www.nexteraconsult.com/link" target="_blank" rel="noopener">nexteraconsult.com/link</a></li>
+                <li><strong>Idea Spark:</strong> <a href="https://www.ideaspark.nexteraconsult.com" target="_blank" rel="noopener">ideaspark.nexteraconsult.com</a></li>
+                <li><strong>AI Passport:</strong> <a href="https://www.ai-passport.nexteraconsult.com" target="_blank" rel="noopener">ai-passport.nexteraconsult.com</a></li>
+                <li><strong>Gatekeeper:</strong> <a href="https://www.gatekeeper.nexteraconsult.com" target="_blank" rel="noopener">gatekeeper.nexteraconsult.com</a></li>
+                <li><strong>Pulse Tracker:</strong> <a href="https://www.pulse-tracker.nexteraconsult.com" target="_blank" rel="noopener">pulse-tracker.nexteraconsult.com</a></li>
+            </ul>
+        </div>
+       
+        <a href="https://www.nexteraconsult.com/link" target="_blank" rel="noopener" class="cta">Try the Free Nextera AI Hub →</a>
+       
+        <p style="font-size: 1.2rem; margin-top: 30px;">
+            Ready to eliminate manual work? 
+            <a href="https://calendly.com/noah-nexteraconsulting/ops-audit" target="_blank" rel="noopener"><strong>Book a free operations audit</strong></a>.
+        </p>
+    </div>
 </body>
 </html>
