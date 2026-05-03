@@ -19,6 +19,6 @@ The AI Hub offers a better experience: interactive prompt customization, downloa
 
 ## Need help putting AI to work for your business?
 
-Nextera Consulting builds custom AI workflows and agents for small businesses. [Book a free consultation →](https://calendly.com/noah-nexteraconsulting/quick-chat)
+Nextera Consulting builds custom AI workflows and agents for small businesses. [Book a free consultation →](https://nexteraconsult.com)
 
 — Noah Dolinko, Nextera Consulting
