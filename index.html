@@ -22,17 +22,17 @@
             background: var(--bg);
             color: #f0f0f5;
             margin: 0;
-            padding: 60px 20px;
+            padding: 50px 12px;           /* very tight sides */
             line-height: 1.7;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 820px;               /* tighter overall width */
+            max-width: 780px;             /* narrower container */
             margin: 0 auto;
             background: var(--card);
             border-radius: 20px;
-            padding: 56px 36px;             /* much tighter horizontal padding on desktop */
+            padding: 52px 32px;           /* tight internal padding */
             box-shadow: 0 20px 60px rgba(0, 212, 255, 0.08);
             position: relative;
             overflow: hidden;
@@ -52,7 +52,7 @@
 
         h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 3.3rem;
+            font-size: 3.2rem;
             font-weight: 700;
             margin-bottom: 12px;
             background: linear-gradient(90deg, #00d4ff, #7b5cff);
@@ -61,24 +61,24 @@
         }
 
         .tagline {
-            font-size: 1.5rem;
+            font-size: 1.48rem;
             color: #a0a0b0;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
 
         h2 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.2rem;
-            margin: 48px 0 24px;
+            font-size: 2.1rem;
+            margin: 44px 0 20px;
             color: #f0f0f5;
         }
 
         .projects {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(0, 212, 255, 0.15);
-            padding: 32px;
+            padding: 28px;
             border-radius: 16px;
-            margin: 40px 0;
+            margin: 36px 0;
         }
 
         .cta {
@@ -102,8 +102,9 @@
 
         /* Mobile */
         @media (max-width: 640px) {
-            .container { padding: 48px 24px; }
-            h1 { font-size: 2.8rem; }
+            body { padding: 40px 10px; }
+            .container { padding: 44px 24px; }
+            h1 { font-size: 2.7rem; }
         }
     </style>
 </head>
@@ -128,7 +129,7 @@
        
         <a href="https://www.nexteraconsult.com/link" target="_blank" rel="noopener" class="cta">Try the Free Nextera AI Hub →</a>
        
-        <p style="margin-top: 40px; font-size: 1.18rem;">
+        <p style="margin-top: 36px; font-size: 1.18rem;">
             Ready to eliminate manual work?
             <a href="https://calendly.com/noah-nexteraconsulting/ops-audit" target="_blank" rel="noopener"><strong>Book a free operations audit</strong></a>.
         </p>
