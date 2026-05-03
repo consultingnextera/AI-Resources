@@ -4,99 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="iZ8Rav5v8Tyy4qq_2fhdtOUiFk1_c6S_vyRNDysSVuI" />
-    <meta name="description" content="Nextera Consulting - AI Automation & Operations Consulting. Custom AI workflows and tools that scale your business without increasing headcount.">
-    <title>Nextera Consulting | AI Automation & Operations</title>
+    <meta name="description" content="Nextera Consulting - Free AI Resources, Prompts & Automation Workflows">
+    <title>Nextera Consulting | AI Resources</title>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --bg: #0a0a0f;
+            --card: #1a1a24;
+            --accent: #00d4ff;
+            --accent2: #7b5cff;
+        }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: #f0f0f5;
             margin: 0;
             padding: 80px 20px;
-            line-height: 1.75;
-            color: #222;
-            background: linear-gradient(135deg, #f8f9fc 0%, #eef1f8 100%);
+            line-height: 1.7;
             min-height: 100vh;
         }
 
         .container {
             max-width: 920px;
             margin: 0 auto;
-            background: white;
+            background: var(--card);
             border-radius: 20px;
-            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.09);
-            padding: 64px 56px;
+            padding: 60px 50px;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.08);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.1);
         }
 
         .container::before {
             content: '';
             position: absolute;
-            top: -40%;
-            right: -30%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(13, 110, 253, 0.07) 0%, transparent 65%);
+            top: -150px;
+            right: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
             z-index: 0;
         }
 
         h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 3.4rem;
+            font-size: 3.2rem;
             font-weight: 700;
             margin-bottom: 12px;
-            color: #0f172a;
+            background: linear-gradient(90deg, #00d4ff, #7b5cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .tagline {
-            font-size: 1.55rem;
-            color: #475569;
+            font-size: 1.45rem;
+            color: #a0a0b0;
             margin-bottom: 32px;
         }
 
         h2 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.25rem;
-            margin: 52px 0 24px;
-            color: #0f172a;
+            font-size: 2.1rem;
+            margin: 48px 0 24px;
+            color: #f0f0f5;
         }
 
         .projects {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 40px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            padding: 36px;
             border-radius: 16px;
-            margin: 48px 0;
+            margin: 40px 0;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: white;
+            text-decoration: underline;
         }
 
         .cta {
             display: inline-block;
+            margin: 32px 0;
             padding: 18px 36px;
-            background: #0d6efd;
-            color: white;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            color: #000;
+            font-weight: 700;
             border-radius: 12px;
-            font-weight: 600;
-            font-size: 1.22rem;
-            text-decoration: none;
-            box-shadow: 0 10px 25px rgba(13, 110, 253, 0.25);
+            font-size: 1.2rem;
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
             transition: all 0.3s;
         }
 
         .cta:hover {
-            background: #0b5ed7;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(13, 110, 253, 0.35);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Nextera Consulting</h1>
-        <p class="tagline">AI Automation &amp; Operations Consulting</p>
+        <p class="tagline">AI Automation &amp; Operations</p>
         
-        <p>We build custom AI workflows and automation systems that help businesses scale output <strong>without scaling headcount</strong>.</p>
+        <p>We build custom AI workflows and automation systems that help businesses scale output without scaling headcount.</p>
         
         <h2>Our Projects &amp; Tools</h2>
         
@@ -112,7 +131,7 @@
         
         <a href="https://www.nexteraconsult.com/link" target="_blank" rel="noopener" class="cta">Try the Free Nextera AI Hub →</a>
         
-        <p style="margin-top: 40px; font-size: 1.18rem;">
+        <p style="margin-top: 40px; font-size: 1.15rem;">
             Ready to eliminate manual work? 
             <a href="https://calendly.com/noah-nexteraconsulting/ops-audit" target="_blank" rel="noopener"><strong>Book a free operations audit</strong></a>.
         </p>
