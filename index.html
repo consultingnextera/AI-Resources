@@ -22,17 +22,17 @@
             background: var(--bg);
             color: #f0f0f5;
             margin: 0;
-            padding: 40px 10px;           /* very tight body sides */
+            padding: 40px 10px;
             line-height: 1.7;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 740px;             /* narrower card */
+            max-width: 740px;
             margin: 0 auto;
             background: var(--card);
             border-radius: 20px;
-            padding: 48px 28px;           /* tight internal padding */
+            padding: 32px 28px 48px;      /* reduced top padding */
             box-shadow: 0 20px 60px rgba(0, 212, 255, 0.08);
             position: relative;
             overflow: hidden;
@@ -54,7 +54,7 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 3.1rem;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin: 0 0 12px 0;           /* zero top margin */
             background: linear-gradient(90deg, #00d4ff, #7b5cff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -76,7 +76,7 @@
         .projects {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(0, 212, 255, 0.15);
-            padding: 24px;                /* tighter project box */
+            padding: 24px;
             border-radius: 16px;
             margin: 32px 0;
         }
@@ -103,7 +103,7 @@
         /* Mobile */
         @media (max-width: 640px) {
             body { padding: 32px 8px; }
-            .container { padding: 40px 20px; }
+            .container { padding: 28px 20px 40px; }
             h1 { font-size: 2.6rem; }
         }
     </style>
